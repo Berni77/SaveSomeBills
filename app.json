@@ -1,0 +1,35 @@
+{
+  "expo": {
+    "name": "saveSome",
+    "slug": "savesome",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.savesome.app",
+      "infoPlist": {
+        "NSCameraUsageDescription": "saveSome benötigt die Kamera zum Scannen von Geräte-Typenkildern."
+      }
+    },
+    "android": {
+      "package": "com.savesome.app",
+      "adaptiveIcon": {
+        "backgroundColor": "#0a0a0f"
+      },
+      "permissions": [
+        "android.permission.CAMERA"
+      ]
+    },
+    "plugins": [
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "saveSome benötigt die Kamera zum Scannen von Geräte-Typenkildern."
+        }
+      ],
+      "expo-font",
+      "expo-sqlite"
+    ]
+  }
+}

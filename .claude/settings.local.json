@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node -e \"const p = require\\('./package.json'\\); console.log\\('expo SDK:', p.dependencies.expo\\); console.log\\('expo-camera:', p.dependencies['expo-camera']\\); console.log\\('expo-barcode-scanner:', p.dependencies['expo-barcode-scanner']\\);\")",
+      "Bash(node -e \"try { const p = require\\('./node_modules/expo-camera/package.json'\\); console.log\\('expo-camera installed:', p.version\\); } catch\\(e\\) { console.log\\('expo-camera: not installed'\\); }\")",
+      "Bash(node -e \"try { const p = require\\('./node_modules/expo-barcode-scanner/package.json'\\); console.log\\('expo-barcode-scanner installed:', p.version\\); } catch\\(e\\) { console.log\\('expo-barcode-scanner: not installed'\\); }\")",
+      "Bash(npx expo *)",
+      "Bash(npm install *)",
+      "Bash(node -e \"const p = require\\('./node_modules/expo-camera/package.json'\\); console.log\\('expo-camera installed:', p.version\\);\")",
+      "Bash(node -e \"try { require\\('./node_modules/expo-barcode-scanner/package.json'\\); console.log\\('barcode-scanner: still installed!'\\); } catch\\(e\\) { console.log\\('expo-barcode-scanner: entfernt'\\); }\")",
+      "Bash(node -e \"const pkg = require\\('./node_modules/expo-camera'\\); const keys = Object.keys\\(pkg\\); console.log\\('Exports:', keys.join\\(', '\\)\\);\")",
+      "Bash(npx expo-doctor *)",
+      "Bash(node -e ' *)",
+      "Bash(node *)"
+    ]
+  }
+}
