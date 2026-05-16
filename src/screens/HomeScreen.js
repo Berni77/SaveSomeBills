@@ -17,24 +17,29 @@ export default function HomeScreen({ navigation }) {
   const [search, setSearch]     = useState('');
   const [billVisible, setBillVisible] = useState(false);
 
+  // Lädt Geräte und Einstellungen neu, sobald der Screen fokussiert wird
   useFocusEffect(useCallback(() => {
     getAllDevices().then(setDevices);
     getSettings().then(setSettings);
   }, []));
 
+  // Filtert Geräte nach dem Suchbegriff
   const filtered = devices.filter(d =>
     d.name.toLowerCase().includes(search.toLowerCase())
   );
 
+  // Gruppiert gefilterte Geräte nach Raum; leere Räume werden ausgeblendet
   const devicesByRoom = rooms.map(room => ({
     ...room,
     devices: filtered.filter(d => d.room_id === room.id),
   })).filter(r => r.devices.length > 0);
 
+  // Navigiert zur Detailansicht des gewählten Geräts
   const goToDevice = (device) => {
     navigation.navigate('DeviceDetail', { device });
   };
 
+  // Berechnet den Fortschritt in % und wählt Farbe (grün/gelb/rot)
   const progressPct   = Math.min(Math.round((currentMonth.kwh / settings.monthlyGoalKwh) * 100), 100);
   const progressColor = progressPct > 85 ? colors.danger : progressPct > 65 ? colors.warning : colors.accent;
   const goalEur       = (settings.monthlyGoalKwh * settings.strompreis).toFixed(2);

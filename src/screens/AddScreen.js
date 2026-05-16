@@ -64,6 +64,7 @@ export default function AddScreen() {
   const [addedDevices, setAddedDevices] = useState([]);
   const [cameraVisible, setCameraVisible] = useState(false);
 
+  // Beim Laden: bereits in der DB vorhandene Geräte als "hinzugefügt" markieren
   useEffect(() => {
     getAllDevices().then(rows => {
       const existingIds = rows.map(r => r.id);
@@ -79,12 +80,14 @@ export default function AddScreen() {
   const [customEnergyClass, setCustomEnergyClass] = useState('');
   const [customRoom, setCustomRoom] = useState('');
 
+  // Filtert die Gerätekatalog-Liste nach gewählter Kategorie und Suchbegriff
   const filtered = ALL_DEVICES.filter(d => {
     const matchCat   = selectedCat === 'Alle' || d.category === selectedCat;
     const matchQuery = query.length < 2 || d.name.toLowerCase().includes(query.toLowerCase()) || d.category.toLowerCase().includes(query.toLowerCase());
     return matchCat && matchQuery;
   });
 
+  // Fügt ein Gerät aus der Katalogliste zur DB hinzu und aktualisiert den lokalen Status
   const addDevice = async (device) => {
     if (addedDevices.includes(device.id)) {
       Alert.alert('Bereits hinzugefügt', `${device.name} ist bereits verknüpft.`);
@@ -109,6 +112,7 @@ export default function AddScreen() {
     }
   };
 
+  // Speichert ein manuell erfasstes Gerät mit selbst vergebener ID (custom_<timestamp>)
   const addCustomDevice = async () => {
     if (!customName.trim()) {
       Alert.alert('Pflichtfeld', 'Bitte gib einen Gerätenamen ein.');
@@ -140,6 +144,7 @@ export default function AddScreen() {
     }
   };
 
+  // Fordert Kamera-Berechtigung an und öffnet den Barcode-Scanner
   const handleScanPress = async () => {
     if (!permission || !permission.granted) {
       const result = await requestPermission();
@@ -152,6 +157,7 @@ export default function AddScreen() {
     setCameraVisible(true);
   };
 
+  // Verarbeitet einen gescannten Barcode und sucht das Gerät anhand der PNC-Nummer
   const handleBarCodeScanned = ({ type, data }) => {
     if (scanned) return;
     setScanned(true);

@@ -11,6 +11,7 @@ import { getAllDevices, getSettings } from '../data/database';
 import AppHeader from '../components/AppHeader';
 
 // ─── Bar Chart ───────────────────────────────────────────────────────────────
+// Zeichnet ein einfaches Balkendiagramm; der Balken am accentIndex wird farblich hervorgehoben
 function BarChart({ data, valueKey, labelKey, accentIndex }) {
   const maxVal = Math.max(...data.map(d => d[valueKey]));
   return (
@@ -38,7 +39,7 @@ function BarChart({ data, valueKey, labelKey, accentIndex }) {
   );
 }
 
-// ─── Ampel color: rank 0=highest=red → green ─────────────────────────────────
+// Gibt eine Ampelfarbe zurück: der größte Verbraucher (Index 0) ist rot, der kleinste grün
 function ampelColor(index, total) {
   const t = index / Math.max(total - 1, 1); // 0.0 (red) → 1.0 (green)
   if (t < 0.33) return '#e74c3c';
@@ -57,12 +58,14 @@ export default function AnalyseScreen() {
   const [infoDevice, setInfoDevice] = useState(null);
   const [calcResult, setCalcResult] = useState(null);
 
+  // Lädt Geräte und Einstellungen neu wenn der Tab fokussiert wird
   useFocusEffect(useCallback(() => {
     getAllDevices().then(setDbDevices);
     getSettings().then(setSettings);
   }, []));
 
   // ── Top Verbraucher aus DB ────────────────────────────────────────────────
+  // Berechnet monatlichen Gesamtverbrauch und sortiert Geräte nach Verbrauch absteigend
   const totalKwhMonth = dbDevices.reduce((sum, d) => sum + d.kwh_per_day * 30, 0);
   const sortedByKwh   = [...dbDevices].sort((a, b) => (b.kwh_per_day * 30) - (a.kwh_per_day * 30));
   const top5          = sortedByKwh.slice(0, 5);
@@ -87,6 +90,7 @@ export default function AnalyseScreen() {
   const sortedConsumers = computedTopConsumers.sort((a, b) => b.kwh_month - a.kwh_month);
 
   // ── Amortisationsrechner aus DB ───────────────────────────────────────────
+  // Erstellt Vergleichsdaten: Neugerät hat pauschal 25% weniger Verbrauch als aktuelles Gerät
   const computedAmortizationDevices = dbDevices.map(d => ({
     id:         d.id,
     name:       d.name,
@@ -99,6 +103,7 @@ export default function AnalyseScreen() {
     ? (computedAmortizationDevices.find(d => d.id === selectedDevice.id) ?? computedAmortizationDevices[0])
     : computedAmortizationDevices[0];
 
+  // Berechnet jährliche Einsparung und Amortisationszeit für das gewählte Gerät
   const runCalculation = () => {
     const dev = effectiveDevice;
     if (!dev) return;
@@ -109,12 +114,14 @@ export default function AnalyseScreen() {
     setCalcResult({ savingKwh: savingKwh.toFixed(0), savingEur: savingEur.toFixed(0), newPrice: dev.newPrice, years });
   };
 
+  // Wählt die passenden Diagrammdaten je nach gewähltem Zeitraum
   const chartData = period === 'Woche'
     ? weeklyData.map(d => ({ label: d.day,   value: d.kwh }))
     : period === 'Monat'
     ? monthlyData.map(d => ({ label: d.label, value: d.kwh }))
     : yearlyData.map(d => ({ label: d.label,  value: d.kwh }));
 
+  // Ermittelt den Index des höchsten Balkens für die Akzentfarbe im Diagramm
   const maxIdx = chartData.reduce((mi, d, i, arr) => d.value > arr[mi].value ? i : mi, 0);
 
   return (

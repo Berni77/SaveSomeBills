@@ -15,6 +15,7 @@ import SettingsScreen from '../screens/SettingsScreen';
 const Tab = createBottomTabNavigator();
 const HomeStack = createNativeStackNavigator();
 
+// Stack-Navigator für den Home-Bereich: HomeMain → DeviceDetail / Settings
 function HomeStackNavigator() {
   return (
     <HomeStack.Navigator screenOptions={{ headerShown: false }}>
@@ -25,6 +26,7 @@ function HomeStackNavigator() {
   );
 }
 
+// Haupt-Navigator: BottomTab mit vier Tabs, Home verwendet eigenen Stack
 export default function AppNavigator() {
   return (
     <Tab.Navigator

@@ -28,13 +28,17 @@ export default function ProfileScreen() {
 
   const maxKwh = Math.max(friendsComparison.userKwh, friendsComparison.friendsAvgKwh, 200);
 
+  // Lädt die aktuellen Einstellungen wenn der Screen fokussiert wird
   useFocusEffect(useCallback(() => {
     getSettings().then(setSettings);
   }, []));
 
+  // Öffnet das Bearbeitungs-Modal für das Energieziel
   const openGoal  = () => setEditSetting('goal');
+  // Öffnet das Bearbeitungs-Modal für den Strompreis mit aktuellem Wert vorbelegt
   const openPrice = () => { setTempValue(String(settings.strompreis)); setEditSetting('price'); };
 
+  // Speichert das gewählte Energieziel (kWh) direkt per Tipp auf einen Preset-Button
   const saveGoal = async (kwh) => {
     const next = { ...settings, monthlyGoalKwh: kwh };
     setSettings(next);
@@ -42,6 +46,7 @@ export default function ProfileScreen() {
     await saveSetting('monthlyGoalKwh', kwh);
   };
 
+  // Validiert und speichert den eingegebenen Strompreis (Komma und Punkt werden akzeptiert)
   const savePrice = async () => {
     const price = parseFloat(tempValue.replace(',', '.'));
     if (isNaN(price) || price <= 0) {
@@ -54,6 +59,7 @@ export default function ProfileScreen() {
     await saveSetting('strompreis', price);
   };
 
+  // Schaltet Benachrichtigungen um und speichert den neuen Wert in der DB
   const toggleNotifications = async () => {
     const next = { ...settings, notifications: !settings.notifications };
     setSettings(next);

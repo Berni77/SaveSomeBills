@@ -3,11 +3,13 @@ import { devices as seedDevices } from './dummyData';
 
 let dbPromise = null;
 
+// Gibt die Datenbankinstanz zurück; initialisiert sie beim ersten Aufruf
 function getDb() {
   if (!dbPromise) dbPromise = initDb();
   return dbPromise;
 }
 
+// Erstellt Tabellen und befüllt sie beim ersten Start mit Dummy-Daten
 async function initDb() {
   const db = await SQLite.openDatabaseAsync('savesome.db');
   await db.execAsync(`
@@ -64,11 +66,13 @@ async function initDb() {
   return db;
 }
 
+// Gibt alle gespeicherten Geräte sortiert nach Raum zurück
 export async function getAllDevices() {
   const db = await getDb();
   return db.getAllAsync('SELECT * FROM devices ORDER BY room_id');
 }
 
+// Liest alle Einstellungen und gibt sie als typisiertes Objekt zurück
 export async function getSettings() {
   const db = await getDb();
   const rows = await db.getAllAsync('SELECT key, value FROM settings');
@@ -80,6 +84,7 @@ export async function getSettings() {
   };
 }
 
+// Speichert oder überschreibt einen einzelnen Einstellungswert
 export async function saveSetting(key, value) {
   const db = await getDb();
   await db.runAsync(
@@ -88,6 +93,8 @@ export async function saveSetting(key, value) {
   );
 }
 
+// Fügt ein neues Gerät ein; ignoriert Duplikate (gleiche ID) dank INSERT OR IGNORE
+// kwh_per_day wird automatisch aus Watt berechnet wenn nicht angegeben (Watt × 8h / 1000)
 export async function insertDevice(device) {
   const db = await getDb();
   await db.runAsync(
@@ -113,11 +120,13 @@ export async function insertDevice(device) {
   );
 }
 
+// Löscht ein Gerät anhand seiner ID aus der Datenbank
 export async function deleteDevice(id) {
   const db = await getDb();
   await db.runAsync('DELETE FROM devices WHERE id=?', [id]);
 }
 
+// Aktualisiert die bearbeitbaren Felder eines vorhandenen Geräts
 export async function updateDevice(device) {
   const db = await getDb();
   await db.runAsync(

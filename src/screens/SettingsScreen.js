@@ -8,12 +8,14 @@ import { colors, typography, spacing, radius } from '../data/theme';
 import { user } from '../data/dummyData';
 import AppHeader from '../components/AppHeader';
 
+// Einstellungsscreen: Energieziel, Benachrichtigungen, Tarifinformationen und App-Links
 export default function SettingsScreen({ navigation }) {
   const [notifications, setNotifications] = useState(true);
   const [weeklyReport, setWeeklyReport] = useState(true);
   const [peakAlert, setPeakAlert] = useState(false);
   const [goalKwh, setGoalKwh] = useState(user.monthlyGoalKwh);
 
+  // Verfügbare Energieziel-Voreinstellungen in kWh
   const goals = [100, 120, 150, 180, 200, 250];
 
   return (

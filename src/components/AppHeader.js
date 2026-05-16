@@ -3,6 +3,10 @@ import { View, Text, TouchableOpacity, StyleSheet, Modal, Alert } from 'react-na
 import { Ionicons } from '@expo/vector-icons';
 import { colors, typography, spacing, radius } from '../data/theme';
 
+// Einheitlicher App-Header mit internem Menü-Modal.
+// extraMenuItems: screen-spezifische Menüpunkte (z.B. Bearbeiten/Löschen in DeviceDetail)
+// onScanPress: zeigt "Stromrechnung scannen" als ersten Menüpunkt (nur HomeScreen)
+// showBack: ersetzt das Flash-Icon durch einen Zurück-Button
 export default function AppHeader({ title = 'saveSomeBills', onBackPress, showBack = false, onScanPress, extraMenuItems = [] }) {
   const [menuVisible, setMenuVisible] = useState(false);
 

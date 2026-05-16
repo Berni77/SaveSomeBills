@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { colors, typography, spacing, radius } from '../data/theme';
 
+// Einzelne Gerätezeile: zeigt Icon, Name und Watt an; aktive Geräte werden farblich hervorgehoben
 export default function DeviceItem({ device, onPress }) {
   const isActive = device.status === 'active';
   return (

@@ -18,6 +18,7 @@ export default function DeviceDetailScreen({ route, navigation }) {
   const [editVisible, setEditVisible] = useState(false);
   const [editForm, setEditForm] = useState({});
 
+  // Befüllt das Bearbeitungsformular mit den aktuellen Gerätewerten und öffnet das Modal
   const openEdit = () => {
     setEditForm({
       name:        deviceData.name,
@@ -30,6 +31,7 @@ export default function DeviceDetailScreen({ route, navigation }) {
     setEditVisible(true);
   };
 
+  // Validiert die Eingaben und speichert die geänderten Gerätedaten in der DB
   const saveEdit = async () => {
     if (!editForm.name.trim()) {
       Alert.alert('Fehler', 'Name darf nicht leer sein.');
@@ -54,6 +56,7 @@ export default function DeviceDetailScreen({ route, navigation }) {
     await updateDevice(updated);
   };
 
+  // Weist dem Gerät einen neuen Raum zu und persistiert die Änderung sofort
   const changeRoom = async (roomId) => {
     setSelectedRoom(roomId);
     await updateDevice({ ...deviceData, room_id: roomId });

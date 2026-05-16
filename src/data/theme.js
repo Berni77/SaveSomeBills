@@ -1,3 +1,6 @@
+// Zentrales Design-System – alle Farben, Schriftgrößen, Abstände und Radien der App
+
+// Farbpalette: Dunkles Theme mit Cyan-Akzent (#00d4aa)
 export const colors = {
   // Backgrounds
   bg: '#0a0a0f',
@@ -28,6 +31,7 @@ export const colors = {
   tabBg: '#0f0f18',
 };
 
+// Typografie-Skala: einheitliche Schriftgrößen und -gewichte
 export const typography = {
   fontSizes: {
     xs: 10,
@@ -47,6 +51,7 @@ export const typography = {
   },
 };
 
+// Abstands-Skala in Pixeln für konsistente Layouts
 export const spacing = {
   xs: 4,
   sm: 8,
@@ -57,6 +62,7 @@ export const spacing = {
   xxl: 32,
 };
 
+// Border-Radius-Werte für abgerundete Ecken
 export const radius = {
   sm: 6,
   md: 10,
