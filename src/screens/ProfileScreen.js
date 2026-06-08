@@ -159,6 +159,23 @@ export default function ProfileScreen() {
         </TouchableOpacity>
 
         <View style={styles.card}>
+          <Text style={styles.sectionLabel}>EINSTELLUNGEN</Text>
+          {[
+            { icon: 'flag-outline',             label: 'Monatliches Energieziel', value: `${settings.monthlyGoalKwh} kWh`,              onPress: openGoal },
+            { icon: 'flash-outline',            label: 'Strompreis',              value: `${settings.strompreis.toFixed(2)} €/kWh`,     onPress: openPrice },
+            { icon: 'notifications-outline',    label: 'Benachrichtigungen',      value: settings.notifications ? 'An' : 'Aus',         onPress: toggleNotifications },
+            { icon: 'shield-checkmark-outline', label: 'Datenschutz',             value: '',                                            onPress: () => Alert.alert('Datenschutz', 'Alle Daten werden ausschließlich lokal auf diesem Gerät gespeichert.') },
+          ].map(item => (
+            <TouchableOpacity key={item.label} style={styles.settingRow} onPress={item.onPress}>
+              <Ionicons name={item.icon} size={18} color={colors.accent} />
+              <Text style={styles.settingLabel}>{item.label}</Text>
+              <Text style={styles.settingValue}>{item.value}</Text>
+              <Ionicons name="chevron-forward" size={16} color={colors.textMuted} />
+            </TouchableOpacity>
+          ))}
+        </View>
+
+        <View style={styles.card}>
           <Text style={styles.sectionLabel}>MEIN VERBRAUCH</Text>
           <View style={styles.statsGrid}>
             <View style={styles.statBox}>
@@ -236,23 +253,6 @@ export default function ProfileScreen() {
           </View>
           <Text style={styles.globalSub}>Ähnliche Haushalte: ~{friendsComparison.globalAvgKwh} kWh</Text>
           <Text style={styles.globalSub2}>Du bist sparsamer als {100 - friendsComparison.globalPercentile}% aller Haushalte</Text>
-        </View>
-
-        <View style={styles.card}>
-          <Text style={styles.sectionLabel}>EINSTELLUNGEN</Text>
-          {[
-            { icon: 'flag-outline',             label: 'Monatliches Energieziel', value: `${settings.monthlyGoalKwh} kWh`,              onPress: openGoal },
-            { icon: 'flash-outline',            label: 'Strompreis',              value: `${settings.strompreis.toFixed(2)} €/kWh`,     onPress: openPrice },
-            { icon: 'notifications-outline',    label: 'Benachrichtigungen',      value: settings.notifications ? 'An' : 'Aus',         onPress: toggleNotifications },
-            { icon: 'shield-checkmark-outline', label: 'Datenschutz',             value: '',                                            onPress: () => Alert.alert('Datenschutz', 'Alle Daten werden ausschließlich lokal auf diesem Gerät gespeichert.') },
-          ].map(item => (
-            <TouchableOpacity key={item.label} style={styles.settingRow} onPress={item.onPress}>
-              <Ionicons name={item.icon} size={18} color={colors.accent} />
-              <Text style={styles.settingLabel}>{item.label}</Text>
-              <Text style={styles.settingValue}>{item.value}</Text>
-              <Ionicons name="chevron-forward" size={16} color={colors.textMuted} />
-            </TouchableOpacity>
-          ))}
         </View>
 
         <View style={{ height: 30 }} />

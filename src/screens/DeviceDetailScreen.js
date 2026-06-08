@@ -190,6 +190,10 @@ export default function DeviceDetailScreen({ route, navigation }) {
             </View>
             <Text style={styles.wattText}>· Aktueller Verbrauch: {deviceData.watt}W</Text>
           </View>
+          <TouchableOpacity style={styles.editHeroBtn} onPress={openEdit}>
+            <Ionicons name="create-outline" size={16} color={colors.bg} style={{ marginRight: 6 }} />
+            <Text style={styles.editHeroBtnText}>Bearbeiten</Text>
+          </TouchableOpacity>
         </View>
 
         <View style={styles.statsRow}>
@@ -298,6 +302,8 @@ const styles = StyleSheet.create({
   badge: { backgroundColor: colors.accentGlow, borderRadius: radius.sm, paddingHorizontal: 8, paddingVertical: 3, borderWidth: 1, borderColor: colors.accent },
   badgeText: { fontSize: typography.fontSizes.xs, fontWeight: typography.fontWeights.bold, color: colors.accent },
   wattText: { fontSize: typography.fontSizes.sm, color: colors.textSecondary },
+  editHeroBtn: { flexDirection: 'row', alignItems: 'center', marginTop: spacing.base, backgroundColor: colors.accent, paddingVertical: 8, paddingHorizontal: 20, borderRadius: radius.full },
+  editHeroBtnText: { fontSize: typography.fontSizes.sm, fontWeight: '700', color: colors.bg },
 
   // Stats
   statsRow: { flexDirection: 'row', backgroundColor: colors.bgCard, marginHorizontal: spacing.base, borderRadius: radius.lg, padding: spacing.base, marginBottom: spacing.base, borderWidth: 1, borderColor: colors.border },

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Modal, Alert } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { colors, typography, spacing, radius } from '../data/theme';
 
@@ -9,10 +10,11 @@ import { colors, typography, spacing, radius } from '../data/theme';
 // showBack: ersetzt das Flash-Icon durch einen Zurück-Button
 export default function AppHeader({ title = 'saveSomeBills', onBackPress, showBack = false, onScanPress, extraMenuItems = [] }) {
   const [menuVisible, setMenuVisible] = useState(false);
+  const insets = useSafeAreaInsets();
 
   return (
     <>
-      <View style={styles.header}>
+      <View style={[styles.header, { paddingTop: insets.top + spacing.sm }]}>
         {showBack ? (
           <TouchableOpacity onPress={onBackPress} style={styles.iconBtn}>
             <Ionicons name="arrow-back" size={22} color={colors.textPrimary} />
@@ -71,7 +73,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: spacing.base,
-    paddingVertical: spacing.md,
+    paddingBottom: spacing.md,
     backgroundColor: colors.bg,
   },
   title: {

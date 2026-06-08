@@ -39,6 +39,72 @@ function BarChart({ data, valueKey, labelKey, accentIndex }) {
   );
 }
 
+// Zeichnet ein Liniendiagramm mit Punkten und verbindenden Linien (pure RN, kein SVG)
+function LineChart({ data, valueKey, labelKey, accentIndex }) {
+  const [chartWidth, setChartWidth] = useState(0);
+  const maxVal = Math.max(...data.map(d => d[valueKey]));
+  const HEIGHT = 100;
+  const PAD = 10;
+
+  const points = chartWidth > 0 ? data.map((item, i) => ({
+    x: data.length > 1 ? (i / (data.length - 1)) * (chartWidth - PAD * 2) + PAD : chartWidth / 2,
+    y: HEIGHT - PAD - ((item[valueKey] / maxVal) * (HEIGHT - PAD * 2)),
+    value: item[valueKey],
+  })) : [];
+
+  return (
+    <View style={{ marginTop: spacing.md }} onLayout={e => setChartWidth(e.nativeEvent.layout.width)}>
+      <View style={{ height: HEIGHT, position: 'relative' }}>
+        {points.slice(0, -1).map((p, i) => {
+          const next = points[i + 1];
+          const dx = next.x - p.x;
+          const dy = next.y - p.y;
+          const length = Math.sqrt(dx * dx + dy * dy);
+          const angle = Math.atan2(dy, dx) * (180 / Math.PI);
+          const cx = (p.x + next.x) / 2;
+          const cy = (p.y + next.y) / 2;
+          return (
+            <View key={i} style={{
+              position: 'absolute',
+              left: cx - length / 2,
+              top: cy - 1,
+              width: length,
+              height: 2,
+              backgroundColor: colors.accent,
+              opacity: 0.6,
+              transform: [{ rotate: `${angle}deg` }],
+            }} />
+          );
+        })}
+        {points.map((p, i) => (
+          <View key={i} style={{
+            position: 'absolute',
+            left: p.x - 5,
+            top: p.y - 5,
+            width: 10,
+            height: 10,
+            borderRadius: 5,
+            backgroundColor: i === accentIndex ? colors.accent : colors.bgCard,
+            borderWidth: 2,
+            borderColor: colors.accent,
+          }}>
+            {i === accentIndex ? (
+              <Text style={{ position: 'absolute', top: -16, left: -8, fontSize: 9, color: colors.accent, fontWeight: '700', width: 26, textAlign: 'center' }}>{p.value}</Text>
+            ) : null}
+          </View>
+        ))}
+      </View>
+      <View style={{ flexDirection: 'row', marginTop: 6, gap: 4 }}>
+        {data.map((item, i) => (
+          <View key={i} style={{ flex: 1, alignItems: 'center' }}>
+            <Text style={styles.barLabel}>{item[labelKey]}</Text>
+          </View>
+        ))}
+      </View>
+    </View>
+  );
+}
+
 // Gibt eine Ampelfarbe zurück: der größte Verbraucher (Index 0) ist rot, der kleinste grün
 function ampelColor(index, total) {
   const t = index / Math.max(total - 1, 1); // 0.0 (red) → 1.0 (green)
@@ -51,6 +117,7 @@ const PERIODS = ['Woche', 'Monat', 'Jahr'];
 
 export default function AnalyseScreen() {
   const [period, setPeriod]         = useState('Woche');
+  const [chartType, setChartType]   = useState('bar');
   const [dbDevices, setDbDevices]   = useState([]);
   const [settings, setSettings]     = useState({ strompreis: 0.30 });
   const [selectedDevice, setSelectedDevice] = useState(null);
@@ -189,21 +256,42 @@ export default function AnalyseScreen() {
           ))}
         </View>
 
-        {/* ── Bar Chart ───────────────────────────────────────────────────── */}
+        {/* ── Chart ───────────────────────────────────────────────────────── */}
         <View style={styles.card}>
-          <Text style={styles.cardTitle}>
-            {period === 'Woche' ? 'Wochenverbrauch' : period === 'Monat' ? 'Monatsverbrauch' : 'Jahresverbrauch'}
-          </Text>
-          <Text style={styles.cardSub}>
-            {period === 'Woche' ? 'Letzte 7 Tage in kWh' : period === 'Monat' ? '2025 in kWh' : 'Vergleich in kWh'}
-          </Text>
+          <View style={styles.chartHeader}>
+            <View>
+              <Text style={styles.cardTitle}>
+                {period === 'Woche' ? 'Wochenverbrauch' : period === 'Monat' ? 'Monatsverbrauch' : 'Jahresverbrauch'}
+              </Text>
+              <Text style={styles.cardSub}>
+                {period === 'Woche' ? 'Letzte 7 Tage in kWh' : period === 'Monat' ? '2025 in kWh' : 'Vergleich in kWh'}
+              </Text>
+            </View>
+            <View style={styles.chartToggle}>
+              <TouchableOpacity
+                style={[styles.chartToggleBtn, chartType === 'bar' && styles.chartToggleBtnActive]}
+                onPress={() => setChartType('bar')}
+              >
+                <Ionicons name="bar-chart-outline" size={15} color={chartType === 'bar' ? colors.accent : colors.textSecondary} />
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.chartToggleBtn, chartType === 'line' && styles.chartToggleBtnActive]}
+                onPress={() => setChartType('line')}
+              >
+                <Ionicons name="trending-up-outline" size={15} color={chartType === 'line' ? colors.accent : colors.textSecondary} />
+              </TouchableOpacity>
+            </View>
+          </View>
           {period === 'Woche' ? (
             <View style={styles.vorjahrRow}>
               <View style={styles.vorjahrLine} />
               <Text style={styles.vorjahrText}>Ø VORJAHR</Text>
             </View>
           ) : null}
-          <BarChart data={chartData} valueKey="value" labelKey="label" accentIndex={maxIdx} />
+          {chartType === 'bar'
+            ? <BarChart data={chartData} valueKey="value" labelKey="label" accentIndex={maxIdx} />
+            : <LineChart data={chartData} valueKey="value" labelKey="label" accentIndex={maxIdx} />
+          }
         </View>
 
         {/* ── Top Verbraucher — Ampelsystem ───────────────────────────────── */}
@@ -361,6 +449,10 @@ const styles = StyleSheet.create({
   card: { backgroundColor: colors.bgCard, marginHorizontal: spacing.base, borderRadius: radius.lg, padding: spacing.base, marginBottom: spacing.md, borderWidth: 1, borderColor: colors.border },
   cardTitle: { fontSize: typography.fontSizes.lg, fontWeight: typography.fontWeights.bold, color: colors.textPrimary, marginBottom: 2 },
   cardSub: { fontSize: typography.fontSizes.sm, color: colors.textSecondary },
+  chartHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' },
+  chartToggle: { flexDirection: 'row', backgroundColor: colors.bgCardLight, borderRadius: radius.md, borderWidth: 1, borderColor: colors.border, overflow: 'hidden' },
+  chartToggleBtn: { padding: 7 },
+  chartToggleBtnActive: { backgroundColor: colors.accentGlow },
   vorjahrRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: spacing.sm },
   vorjahrLine: { width: 20, height: 1, backgroundColor: colors.textMuted },
   vorjahrText: { fontSize: typography.fontSizes.xs, color: colors.textMuted },

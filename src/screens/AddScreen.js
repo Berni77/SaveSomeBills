@@ -257,15 +257,16 @@ export default function AddScreen() {
                 </View>
                 <View style={{ flex: 1 }}>
                   <Text style={styles.customLabel}>Energieklasse</Text>
-                  <View style={styles.customInput}>
-                    <TextInput
-                      style={styles.customInputText}
-                      placeholder="z.B. A+"
-                      placeholderTextColor={colors.textMuted}
-                      value={customEnergyClass}
-                      onChangeText={setCustomEnergyClass}
-                      autoCapitalize="characters"
-                    />
+                  <View style={styles.energyClassGrid}>
+                    {['A++++','A+++','A++','A+','A','B','C','D'].map(cls => (
+                      <TouchableOpacity
+                        key={cls}
+                        style={[styles.energyClassBtn, customEnergyClass === cls ? styles.energyClassBtnActive : null]}
+                        onPress={() => setCustomEnergyClass(customEnergyClass === cls ? '' : cls)}
+                      >
+                        <Text style={[styles.energyClassBtnText, customEnergyClass === cls ? styles.energyClassBtnTextActive : null]}>{cls}</Text>
+                      </TouchableOpacity>
+                    ))}
                   </View>
                 </View>
               </View>
@@ -366,6 +367,18 @@ export default function AddScreen() {
               ))}
             </ScrollView>
 
+            {/* Manual entry banner */}
+            <TouchableOpacity style={styles.manualEntryBanner} onPress={() => setCustomModalVisible(true)}>
+              <View style={styles.manualEntryIconWrap}>
+                <Ionicons name="create-outline" size={20} color={colors.accent} />
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.manualEntryTitle}>Gerät nicht dabei?</Text>
+                <Text style={styles.manualEntrySub}>Eigenes Gerät manuell erfassen</Text>
+              </View>
+              <Ionicons name="chevron-forward" size={16} color={colors.accent} />
+            </TouchableOpacity>
+
             {/* Results count */}
             <View style={styles.resultsHeader}>
               <Text style={styles.resultsTitle}>Geräte</Text>
@@ -406,10 +419,6 @@ export default function AddScreen() {
               </View>
             ) : null}
 
-            <TouchableOpacity style={styles.customDeviceBtn} onPress={() => setCustomModalVisible(true)}>
-              <Ionicons name="add-circle-outline" size={16} color={colors.accent} style={{ marginRight: 6 }} />
-              <Text style={styles.customDeviceBtnText}>Gerät nicht gefunden? Manuell erfassen</Text>
-            </TouchableOpacity>
           </View>
         )}
         <View style={{ height: 40 }} />
@@ -474,8 +483,10 @@ const styles = StyleSheet.create({
   emptyState: { alignItems: 'center', paddingVertical: spacing.xxl },
   emptyText: { fontSize: typography.fontSizes.lg, color: colors.textSecondary, marginTop: spacing.md },
 
-  customDeviceBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginTop: spacing.sm, paddingVertical: spacing.md, borderRadius: radius.md, borderWidth: 1, borderColor: colors.accent, borderStyle: 'dashed' },
-  customDeviceBtnText: { fontSize: typography.fontSizes.sm, color: colors.accent, fontWeight: '500' },
+  manualEntryBanner: { flexDirection: 'row', alignItems: 'center', gap: spacing.md, backgroundColor: colors.accentGlow, borderRadius: radius.md, padding: spacing.md, marginBottom: spacing.md, borderWidth: 1, borderColor: colors.accent },
+  manualEntryIconWrap: { width: 36, height: 36, borderRadius: radius.sm, backgroundColor: colors.bg, justifyContent: 'center', alignItems: 'center' },
+  manualEntryTitle: { fontSize: typography.fontSizes.sm, fontWeight: '700', color: colors.accent },
+  manualEntrySub: { fontSize: typography.fontSizes.xs, color: colors.textSecondary, marginTop: 1 },
 
   customModalOverlay: { flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0,0,0,0.6)' },
   customModalSheet: { backgroundColor: colors.bgCard, borderTopLeftRadius: radius.xl, borderTopRightRadius: radius.xl, padding: spacing.base, paddingBottom: spacing.xxl, maxHeight: '90%' },
@@ -485,7 +496,12 @@ const styles = StyleSheet.create({
   customLabel: { fontSize: typography.fontSizes.sm, color: colors.textSecondary, fontWeight: '500', marginBottom: spacing.xs, marginTop: spacing.md },
   customInput: { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.bgCardLight, borderRadius: radius.md, paddingHorizontal: spacing.md, paddingVertical: spacing.sm, borderWidth: 1, borderColor: colors.borderLight },
   customInputText: { flex: 1, color: colors.textPrimary, fontSize: typography.fontSizes.sm },
-  customRow: { flexDirection: 'row', gap: spacing.sm },
+  customRow: { flexDirection: 'row', gap: spacing.sm, alignItems: 'flex-start' },
+  energyClassGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginTop: 4 },
+  energyClassBtn: { paddingVertical: 5, paddingHorizontal: 10, borderRadius: radius.sm, borderWidth: 1, borderColor: colors.border, backgroundColor: colors.bgCardLight },
+  energyClassBtnActive: { borderColor: colors.accent, backgroundColor: colors.accentGlow },
+  energyClassBtnText: { fontSize: typography.fontSizes.xs, color: colors.textSecondary, fontWeight: '500' },
+  energyClassBtnTextActive: { color: colors.accent, fontWeight: '700' },
   customRoomGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm, marginTop: spacing.xs },
   customRoomBtn: { paddingVertical: 6, paddingHorizontal: 14, borderRadius: radius.full, borderWidth: 1, borderColor: colors.border, backgroundColor: colors.bgCardLight },
   customRoomBtnActive: { borderColor: colors.accent, backgroundColor: colors.accentGlow },
